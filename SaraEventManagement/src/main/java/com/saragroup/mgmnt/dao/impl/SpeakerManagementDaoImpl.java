@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 
@@ -21,9 +23,16 @@ public class SpeakerManagementDaoImpl implements SpeakerManagementDao{
 
 	@Override
 	public boolean createNewSpeaker(Speaker speaker) {
+		String id = getNewSpeakerId();
+		speaker.setSpeakerId(id);
 		mongoTemplate.save(speaker);
 		LOGGER.info("successfully inserted record.."+ speaker);
 		return true;
+	}
+
+	private String getNewSpeakerId() {
+		Query query =  new Query();
+		return "" +mongoTemplate.count(query, Speaker.class) + 1;
 	}
 
 	@Override
@@ -33,5 +42,20 @@ public class SpeakerManagementDaoImpl implements SpeakerManagementDao{
 		}
 		return null;
 	}
+
+	@Override
+	public Speaker fetchDetailsBySpeakerId(String speakerId) {
+		Query query = new Query();
+		return mongoTemplate.findOne(query.addCriteria(Criteria.where("speakerNum").is(speakerId)),
+				Speaker.class);
+	}
+
+	@Override
+	public Speaker getSpeakerByName(String sName) {
+		Query query = new Query();
+		return mongoTemplate.findOne(query.addCriteria(Criteria.where("name").is(sName)),
+				Speaker.class);
+	}
+
 
 }

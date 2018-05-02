@@ -25,13 +25,26 @@ html {
 		<form:form action="login" method="POST" modelAttribute="loginform">
 			<img src="images/App-logo.png" style="height: 45 px; width: 50px;"/>
 			<h4>Sara Event Management</h4>
-			<form:errors></form:errors>
+			
+			<div class="error">
+			<c:if test="${not empty error}">
+   				${error}
+			</c:if>
+			</div>
+			
+			
   			<form:input class="username" type="text" placeholder="Enter Username" path="username"/>
-  			<%-- <form:input class="pw" type="password" placeholder="Enter Password" path="password"/> --%>
+  			<div>
+  			<form:errors path="username" cssClass="error" />
+  			</div>
+  			
   			<form:password class="pw" placeholder="Enter Password" path="password"/>
   			
-  			<input class="button" type="submit" value="Log in"/>
+  			<div>
+  			<form:errors path="password" cssClass="error" />
+  			</div>
   			
+  			<input class="button" style="margin-bottom:40px;" type="submit" value="Log in"/>
   			<li><a href="${pageContext.request.contextPath}/signup">New user Registration</a></li>
   			<li style="margin-left:200px;"><a href="#">Forgot your password?</a></li>
   			

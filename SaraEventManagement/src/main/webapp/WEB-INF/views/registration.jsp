@@ -20,13 +20,13 @@ html {
 }
 
 .error {
-	color: red;
+	color: #f03e30;
 }
 
 form {
   position:relative;
   width:360px;
-  height:420px;
+  height:auto;
   margin:50px auto;
   text-align:center;
   background:#ecf0f1;
@@ -54,17 +54,18 @@ h4 {
 			<h4>Welcome ${username}</h4>
 			<form:input class="username" type="text" placeholder="Enter Username" path="username"/>
 			<form:errors path="username" cssClass="error" />
-			<form:input class="firstName" type="text" placeholder="Enter First Name" path="firstName"/>
-			<form:errors path="firstName" cssClass="error" />
-			<form:input class="lastName" type="text" placeholder="Enter Last Name" path="lastName"/>
-			<form:errors path="lastName" cssClass="error" />
-			<form:input class="email" type="text" placeholder="Enter E-mail id" path="email"/>
+			<form:input class="username" type="text" placeholder="Enter Full Name" path="fullName"/>
+			<form:errors path="fullName" cssClass="error" />
+			<form:input class="username" type="text" placeholder="Enter Contact details" path="phone"/>
+			<form:errors path="phone" cssClass="error" />
+			<form:input class="username" type="text" placeholder="Enter E-mail" path="email"/>
 			<form:errors path="email" cssClass="error" />
 			<form:password class="pw" placeholder="Enter Password" path="password"/>
 			<form:errors path="password" cssClass="error" />
+			<form:password class="pw" placeholder="Re-Enter Password" path="rePassword"/>
+			<form:errors path="rePassword" cssClass="error" />
 			<input class="button" type="submit" value="Sign Up"/>
 			<li><a href="${pageContext.request.contextPath}/">Go Back</a></li>
-
 	</form:form>
 </body>
 </html>

@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -64,6 +62,10 @@ public class HomeController {
 				availableSpeakers.add("Jack Daniels");
 				availableSpeakers.add("Joe West");*/
 				modelMap.addObject("availableSpeakers", availableSpeakers);
+				
+				
+				List<Event> allRegEvents= eventService.fetchAllSubscribedEvents(userDetails.getUsername()); 
+				modelMap.addObject("SubscribedEvents", allRegEvents);
 				
 			} catch (EventServiceException e) {
 		

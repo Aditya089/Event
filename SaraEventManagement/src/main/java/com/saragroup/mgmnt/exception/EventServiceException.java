@@ -6,9 +6,13 @@ public class EventServiceException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private String errorCode="EVENT_SERVER_EXCEPTION";
-	
+	private String errorCode="SERVER_ERROR";
+
+	public EventServiceException(String errorCode, String message, Throwable cause) {
+		super(message, cause);
+		this.errorCode = errorCode;
+	}
+
 	public EventServiceException(String errorCode) {
 		this.errorCode = errorCode;
 	}
@@ -16,18 +20,9 @@ public class EventServiceException extends Exception {
 	public EventServiceException(Throwable cause) {
 		super(cause);
 	}
-	
-	public EventServiceException(String errorCode, Throwable cause) {
-		super(cause);
-		this.errorCode = errorCode;
-	}
-	
-	public EventServiceException(String errorCode, String message, Throwable cause) {
-		super(message, cause);
-		this.errorCode = errorCode;
-	}
 
 	public String getErrorCode() {
 		return errorCode;
 	}
+
 }

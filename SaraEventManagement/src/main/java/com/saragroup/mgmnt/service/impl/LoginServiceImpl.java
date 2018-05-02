@@ -1,20 +1,21 @@
 package com.saragroup.mgmnt.service.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.saragroup.mgmnt.dao.LoginDetailsDao;
+import com.saragroup.mgmnt.exception.AuthenticationException;
 import com.saragroup.mgmnt.exception.EventMgmntDaoException;
 import com.saragroup.mgmnt.exception.EventServiceException;
+import com.saragroup.mgmnt.helper.EncryptionUtility;
 import com.saragroup.mgmnt.model.Login;
 import com.saragroup.mgmnt.model.User;
 import com.saragroup.mgmnt.service.LoginService;
 
 @Service("loginService")
 public class LoginServiceImpl implements LoginService {
-	protected final Log LOGGER = LogFactory.getLog(getClass());
+	private static final Logger LOGGER = Logger.getLogger(LoginServiceImpl.class);
 
 	@Autowired
 	LoginDetailsDao loginDao;
@@ -23,47 +24,51 @@ public class LoginServiceImpl implements LoginService {
 		LOGGER.info("Initializing User Authentication " + user);
 
 		User userLogged = null;
-		
+
 		try {
-			if (isUserAvailable(user.getUsername())) {
-				userLogged = authenticateUser(user);
-				updateLastLoggedIn(userLogged.getUserId());
-			}
-		} catch (EventMgmntDaoException e) {
+			userLogged = authenticateUser(user);
+			updateLastLoggedIn(userLogged.getDocumentId());
+		} catch (Exception e) {
 			LOGGER.fatal("Exception Occured while Retrieving dat from DAO Layer");
-			throw new EventServiceException(e);
+			throw new AuthenticationException(e);
 		}
 
 		return userLogged;
 	}
 
 	private void updateLastLoggedIn(String userId) {
+		LOGGER.info("Updating last login time for userId" + userId);
 		loginDao.updateLastLoggedById(userId);
-		
+
 	}
 
 	private User authenticateUser(Login user) throws EventServiceException, EventMgmntDaoException {
 		User userDtls = loginDao.authUser(user);
+
 		if (userDtls == null) {
+			LOGGER.fatal("Username does not exist for reqeusted user" + user.getUsername());
+			throw new AuthenticationException("USER_NOT_EXIST");
+		}
+
+		if (user.getPassword().equals(userDtls.getPassword())) {
+			LOGGER.info("User successfully authenticated.");
+			userDtls.setRePassword(userDtls.getPassword());
+			return userDtls;
+		} else {
 			LOGGER.fatal("Username & Password not matching");
-			throw new EventServiceException("INCORRECT_CREDENTIALS");
-		}
-		return userDtls;
-	}
-
-	private boolean isUserAvailable(String userName) throws EventServiceException, EventMgmntDaoException {
-		boolean userExists = loginDao.userExists(userName);
-
-		if (!userExists) {
-			throw new EventServiceException("USER_NOT_FOUND");
+			throw new AuthenticationException("INCORRECT_CREDENTIALS");
 		}
 
-		return true;
 	}
 
 	@Override
-	public void registerUser(User user) throws EventMgmntDaoException {
-		loginDao.registerUserDetails(user);
+	public void registerUser(User user) throws EventServiceException {
+		try {
+			loginDao.registerUserDetails(user);
+		} catch (EventMgmntDaoException e) {
+			throw new EventServiceException(e);
+		}
+
 	}
 
 }

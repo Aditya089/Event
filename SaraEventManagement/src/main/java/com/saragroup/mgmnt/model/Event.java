@@ -3,30 +3,36 @@ package com.saragroup.mgmnt.model;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "EVENTS")
-public class Event {
+@TypeAlias("Event")
+public class Event extends AbstractDocument{
 	
-	@Id	
-	private String eventId;
+	@NotEmpty(message="Event name is mandatory.")
+	@Indexed(unique=true)
 	private String eventName;
+	
 	private List<String> topics;
+	
+	@NotEmpty(message="Location is mandatory.")
 	private String location;
+	
 	private Date startTime;
+	
 	private Date endTime;
+	
 	private float cost;
-	@DBRef(db="SPEAKER")
+	
+	@Transient
 	private Speaker speaker;
 	
-	public String getEventId() {
-		return eventId;
-	}
-	public void setEventId(String eventId) {
-		this.eventId = eventId;
-	}
+	private String speakerId;
+
 	public String getEventName() {
 		return eventName;
 	}
@@ -69,7 +75,11 @@ public class Event {
 	public void setSpeaker(Speaker speaker) {
 		this.speaker = speaker;
 	}
-	
-	
+	public String getSpeakerId() {
+		return speakerId;
+	}
+	public void setSpeakerId(String speakerId) {
+		this.speakerId = speakerId;
+	}
 
 }
